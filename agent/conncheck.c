@@ -1276,8 +1276,10 @@ static void priv_update_check_list_failed_components (NiceAgent *agent, NiceStre
       g_assert (p->stream_id == stream->id);
 
       if (p->component_id == (c + 1)) {
-	if (p->state != NICE_CHECK_FAILED)
+	if (p->state != NICE_CHECK_FAILED){
+          comp->check_failed_count = 0;
 	  break;
+         }
       }
     }
  
