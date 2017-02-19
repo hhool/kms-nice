@@ -1282,7 +1282,7 @@ static void priv_update_check_list_failed_components (NiceAgent *agent, NiceStre
       if (p->component_id == (c + 1)) {
         nice_debug("XXXXXXXXXXXXX:agent_find_component:p->component_id == (c + 1):Agent %p %d:%d", agent, stream->id, c + 1);
 	      if (p->state != NICE_CHECK_FAILED) {
-          nice_debug("XXXXXXXXXXXXX:agent_find_component:p->component_id == (c + 1):p->state != NICE_CHECK_FAILED:Agent %p %d:%d", agent, stream->id, c + 1);
+          nice_debug("XXXXXXXXXXXXX:agent_find_component:p->component_id == (c + 1):p->state != NICE_CHECK_FAILED:Agent %p %d:%d failed_count %d", agent, stream->id, c + 1, agent->check_failed_count);
           agent->check_failed_count = 0;
 	        break;
          } else {
@@ -1297,7 +1297,7 @@ static void priv_update_check_list_failed_components (NiceAgent *agent, NiceStre
      * Set the component to FAILED only if it actually had remote candidates
      * that failed.. */
     if (i == NULL && comp != NULL && comp->remote_candidates != NULL) {
-      nice_debug("XXXXXXXXXXXXX:FAILED:NICE_CHECK_FAILED:Agent %p %d:%d", agent, stream->id, c + 1);
+      nice_debug("XXXXXXXXXXXXX:FAILED:NICE_CHECK_FAILED:Agent %p %d:%d failed_count %d", agent, stream->id, c + 1, agent->check_failed_count);
       if(agent->check_failed_count < 1) {
         agent->check_failed_count ++;
       } else {
@@ -1306,6 +1306,9 @@ static void priv_update_check_list_failed_components (NiceAgent *agent, NiceStre
 					   (c + 1), /* component-id */
 					   NICE_COMPONENT_STATE_FAILED);
       }
+    } else {
+      agent->check_failed_count = 0;
+      nice_debug("XXXXXXXXXXXXX:priv_update_check_list_failed_components: check_count %d", agent->check_failed_count);
     }
   }
 }
