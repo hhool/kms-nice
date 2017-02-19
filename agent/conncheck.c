@@ -1266,9 +1266,13 @@ static void priv_update_check_list_failed_components (NiceAgent *agent, NiceStre
   /* note: iterate the conncheck list for each component separately */
   for (c = 0; c < components; c++) {
     NiceComponent *comp = NULL;
-    if (!agent_find_component (agent, stream->id, c+1, NULL, &comp))
+    nice_debug("XXXXXXXXXXXXX:agent_find_component:Agent %p %d:%d", agent, stream->id, c + 1);
+    if (!agent_find_component (agent, stream->id, c+1, NULL, &comp)) {
+      nice_debug("XXXXXXXXXXXXX:agent_find_component:continue");
       continue;
+    }
 
+    nice_debug("XXXXXXXXXXXXX:agent_find_component:Agent %p %d:%d comp %p", agent, stream->id, c + 1, comp);
     for (i = stream->conncheck_list; i; i = i->next) {
       CandidateCheckPair *p = i->data;
 
@@ -1276,10 +1280,16 @@ static void priv_update_check_list_failed_components (NiceAgent *agent, NiceStre
       g_assert (p->stream_id == stream->id);
 
       if (p->component_id == (c + 1)) {
-	if (p->state != NICE_CHECK_FAILED){
-          comp->check_failed_count = 0;
-	  break;
-         }
+        nice_debug("XXXXXXXXXXXXX:agent_find_component:p->component_id == (c + 1):Agent %p %d:%d", agent, stream->id, c + 1);
+	      if (p->state != NICE_CHECK_FAILED) {
+          nice_debug("XXXXXXXXXXXXX:agent_find_component:p->component_id == (c + 1):p->state != NICE_CHECK_FAILED:Agent %p %d:%d", agent, stream->id, c + 1);
+          agent->check_failed_count = 0;
+	        break;
+         } else {
+          nice_debug("XXXXXXXXXXXXX:agent_find_component:p->component_id == (c + 1):p->state == NICE_CHECK_FAILED:Agent %p %d:%d", agent, stream->id, c + 1);
+        }
+      } else {
+        nice_debug("XXXXXXXXXXXXX:agent_find_component:p->component_id != (c + 1):Agent %p %d:%d", agent, stream->id, c + 1);
       }
     }
  
@@ -1288,8 +1298,8 @@ static void priv_update_check_list_failed_components (NiceAgent *agent, NiceStre
      * that failed.. */
     if (i == NULL && comp != NULL && comp->remote_candidates != NULL) {
       nice_debug("XXXXXXXXXXXXX:FAILED:NICE_CHECK_FAILED:Agent %p %d:%d", agent, stream->id, c + 1);
-      if(comp->check_failed_count < 1) {
-        comp->check_failed_count ++;
+      if(agent->check_failed_count < 1) {
+        agent->check_failed_count ++;
       } else {
       agent_signal_component_state_change (agent, 
 					   stream->id,
