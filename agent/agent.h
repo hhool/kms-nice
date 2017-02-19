@@ -264,7 +264,7 @@ GType nice_agent_get_type (void);
  * limit is enforced to protect against malevolent remote
  * clients.
  */
-#define NICE_AGENT_MAX_REMOTE_CANDIDATES    25
+#define NICE_AGENT_MAX_REMOTE_CANDIDATES    100
 
 /**
  * NiceComponentState:

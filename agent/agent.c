@@ -3009,7 +3009,7 @@ nice_agent_set_port_range (NiceAgent *agent, guint stream_id, guint component_id
   g_return_if_fail (component_id >= 1);
 
   agent_lock();
-
+  nice_debug("XXXXXXXXXXXXX:nice_agent_set_port_range:%d %d", min_port, max_port);
   if (agent_find_component (agent, stream_id, component_id, &stream,
           &component)) {
     if (stream->gathering_started) {
@@ -3032,7 +3032,11 @@ nice_agent_add_local_address (NiceAgent *agent, NiceAddress *addr)
   g_return_val_if_fail (addr != NULL, FALSE);
 
   agent_lock();
-
+  {
+    gchar tmpbuf[INET6_ADDRSTRLEN];
+    nice_address_to_string (addr, tmpbuf);
+    nice_debug("XXXXXXXXXXXXX:nice_agent_add_local_address:[%s:%d]", tmpbuf, nice_address_get_port(addr));
+  }
   dupaddr = nice_address_dup (addr);
   nice_address_set_port (dupaddr, 0);
   agent->local_addresses = g_slist_append (agent->local_addresses, dupaddr);
@@ -3066,7 +3070,7 @@ static gboolean priv_add_remote_candidate (
     if (nice_debug_is_enabled ()) {
       gchar tmpbuf[INET6_ADDRSTRLEN];
       nice_address_to_string (addr, tmpbuf);
-      nice_debug ("Agent %p : Updating existing remote candidate with addr [%s]:%u"
+      nice_debug ("XXXXXXXXXXXXX:Agent %p : Updating existing remote candidate with addr [%s]:%u"
           " for s%d/c%d. U/P '%s'/'%s' prio: %u", agent, tmpbuf,
           nice_address_get_port (addr), stream_id, component_id,
           username, password, priority);
@@ -3296,7 +3300,7 @@ nice_agent_set_remote_candidates (NiceAgent *agent, guint stream_id, guint compo
   g_return_val_if_fail (stream_id >= 1, 0);
   g_return_val_if_fail (component_id >= 1, 0);
 
-  nice_debug ("Agent %p: set_remote_candidates %d %d", agent, stream_id, component_id);
+  nice_debug ("XXXXXXXXXXXXX:Agent %p: set_remote_candidates %d %d", agent, stream_id, component_id);
 
   agent_lock();
 
